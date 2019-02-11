@@ -50,4 +50,29 @@ master repo. Can this automatically update `/home/modules/modulefiles`
 user go manually do a `git pull` in `/home/modules/modulefiles` as
 user `modules`?
 
-TBD.
+## Execution
+
+Set up the master repo at `/home/modules/modulefiles`, as user `modules`:
+```
+# Convert the existing Modulefiles into a git repo:
+cd /home/modules/modulefiles
+git init
+git add .
+git commit -m 'Initial checkin of existing modulefiles'
+
+# Enable updates when receiving pushes:
+git config --local receive.denyCurrentBranch updateInstead
+```
+
+## TBD
+
+Need to clone via filesystem, but push via SSH (so users must enter
+password for user `modules`).
+
+Need to write Modulefile to switch to local repo when loaded.
+
+Update that new Modulefile to do the git clone into a fixed directory
+if that repo doesn't already exist.
+
+Update that new Modulefile to warn user if their local clone is out of
+date (needs `git pull`).
