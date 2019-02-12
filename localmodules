@@ -17,11 +17,12 @@ set globalmoddir /home/modules/modulefiles
 set globalmodssh ssh://modules@localhost/home/modules/modulefiles
 
 proc ModulesHelp { } {
+    upvar #0 localmoddir localmoddir
     puts stderr "localmodules: switch to local Git repo for Modulefiles\n"
     puts stderr "This is useful for editing and testing Modulefiles."
     puts stderr "Usage:"
     puts stderr "   $ module load localmodules"
-    puts stderr "Then edit and test modulefiles in ~/modulefiles"
+    puts stderr "Then edit and test modulefiles in $localmoddir"
     puts stderr "When complete, git commit and push, then"
     puts stderr "   $ module unload localmodules"
 }
@@ -32,7 +33,7 @@ module-whatis   "switch MODULEPATH to local git repo"
 proc safesystem {cmd} {
     set retcode [ system $cmd ]
     if { [ expr { $retcode != 0 } ] } {
-        error "Error: `$cmd` returned non-zero exit code: $retcode"
+        error "`$cmd` returned non-zero exit code: $retcode"
     }
 }
 
@@ -40,10 +41,23 @@ proc safesystem {cmd} {
 # if they happen to have something unexpected here
 proc ensure-proper-localmoddir {} {
     upvar #0 localmoddir dir
-    puts stderr "HACK check $dir -- implement me"
+    upvar #0 globalmoddir globalmoddir
+    upvar #0 globalmodssh globalmodssh
+
     # Make sure it's a directory
+    if { ! [ file isdirectory $dir ] } {
+        error "a file named $dir already exists, and I don't want to clobber it"
+    }
+
     # Make sure it has the expected .git remote setup
-    # Make sure it's up to date? (`git pull --ff-only`)
+    if { ! [ file isdirectory [ file join $dir ".git" ] ] } {
+        error "expected git repo inside $dir, found none"
+    }
+    safesystem "if \[ `git -C $dir remote get-url origin` != \"$globalmoddir\" ]; then exit 1; fi"
+    safesystem "if \[ `git -C $dir remote get-url --push origin` != \"$globalmodssh\" ]; then exit 1; fi"
+
+    # Make sure it's up to date (`git pull --ff-only`)
+    system "git -C $dir pull --ff-only"
 }
 
 # No $localmoddir exists, so run `git clone` to create
@@ -51,6 +65,7 @@ proc create-localmoddir {} {
     upvar #0 localmoddir localmoddir
     upvar #0 globalmoddir globalmoddir
     upvar #0 globalmodssh globalmodssh
+
     safesystem "git clone $globalmoddir $localmoddir"
     safesystem "git -C $localmoddir remote set-url --push origin $globalmodssh"
 }
@@ -82,7 +97,7 @@ if [ module-info mode unload ] {
 }
 
 if [ module-info mode load ] {
-    puts stderr "Switched to local modulefiles in ~/modulefiles"
+    puts stderr "Switched to local modulefiles in $localmoddir"
     puts stderr "When editing and testing complete, git commit and push, then:"
     puts stderr "   $ module unload localmodules"
 }
