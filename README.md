@@ -32,24 +32,23 @@ module use --append {/home/modules/modulefiles}
 ```
 
 * There are no other MODULEPATH directories in use. (This is a
-  limitation of `module unload localmodules`.)
+  limitation of my `localmodules` unload process.)
 
 * Other Unix users (not named `modules`) use the modules from
-  `/home/modules/modulefiles` most of the time.
+  `/home/modules/modulefiles`.
 
-## Plan
+## Principles of Operation
 
-Create a git repo for the modulefiles. Does this need to be separated
-from `/home/modules/modulefiles`? Other users will be pushing to it so
-probably yes...or use a branch?
+First we create a git repo for the modulefiles.
 
-Create a modulefile that, when loaded, switches MODULEPATH to a
-locally-created git clone of the modulefiles. When unloaded, it
+Then we install a modulefile that, when loaded, switches MODULEPATH to
+a locally-created git clone of the modulefiles. When unloaded, it
 switches MODULEPATH back to the default.
 
-After editing, testing, and commiting to the local clone, `git push`
-updates the master repo, which (assuming the user knows the password
-for user `modules`) automatically updates `/home/modules/modulefiles`.
+After editing, testing, and commiting to the local git repo, `git
+push` updates the master repo, which (assuming the user knows the
+password for user `modules`) automatically updates
+`/home/modules/modulefiles`.
 
 ## Execution
 
@@ -65,26 +64,28 @@ git commit -m 'Initial checkin of existing modulefiles'
 
 # Enable updates when receiving pushes:
 git config --local receive.denyCurrentBranch updateInstead
+
+# Get localmodules file from GitHub
+curl --output localmodules https://raw.githubusercontent.com/scottj97/environment-modules-in-git/master/localmodules
+
+# Edit paths in the top of localmodules, if your installation differs from the assumptions, then:
+git commit -am 'Add localmodules from github.com/scottj97/environment-modules-in-git'
+
 ```
 
-### Manual clone
-
-*This should be automated into a Modulefile!*
+### Usage
 
 ```
 # As a regular user (i.e. anyone but user modules):
-git clone /home/modules/modulefiles ~/modulefiles
-cd ~/modulefiles
-git remote set-url --push origin ssh://modules@localhost/home/modules/modulefiles
+module load localmodules
+cd $HOME/modulefiles
+
+# Edit, test, then:
+git commit -am 'Make some edits'
+git push
+
+module unload localmodules
 ```
 
-Then put `localmodules` into that module dir, and commit it.
-
-## TBD
-
-Update `localmodules` to do the git clone into a predefined directory
-if that repo doesn't already exist. (Die if directory exists but is
-not (the expected) git repo.)
-
-Update that new Modulefile to warn user if their local clone is out of
-date (needs `git pull`).
+After a successful push and unload, it is safe to delete your local
+`$HOME/modulefiles` directory if you wish.
