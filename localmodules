@@ -6,13 +6,15 @@
 ## This is useful for editing and testing Modulefiles.
 ##
 ## Tune to your system:
-## 1. $localmoddir and $globalmoddir
+## 1. $localmoddir, $globalmoddir, $globalmodssh
 ## 2. ?
 
 eval set  [ array get env HOME ]
+
 set localmoddir   $HOME/modulefiles
 set globalmoddir /home/modules/modulefiles
-
+# Equivalent path via git-ssh:
+set globalmodssh ssh://modules@localhost/home/modules/modulefiles
 
 proc ModulesHelp { } {
     puts stderr "localmodules: switch to local Git repo for Modulefiles\n"
@@ -26,27 +28,40 @@ proc ModulesHelp { } {
 
 module-whatis   "switch MODULEPATH to local git repo"
 
+# Runs `system` and dies if error code is nonzero
+proc safesystem {cmd} {
+    set retcode [ system $cmd ]
+    if { [ expr { $retcode != 0 } ] } {
+        error "Error: `$cmd` returned non-zero exit code: $retcode"
+    }
+}
+
+# Make sure $localmoddir is what we expect, so we don't clobber anybody's work
+# if they happen to have something unexpected here
 proc ensure-proper-localmoddir {} {
     upvar #0 localmoddir dir
     puts stderr "HACK check $dir -- implement me"
     # Make sure it's a directory
     # Make sure it has the expected .git remote setup
-
+    # Make sure it's up to date? (`git pull --ff-only`)
 }
 
+# No $localmoddir exists, so run `git clone` to create
 proc create-localmoddir {} {
-    upvar #0 localmoddir dir
-    error "TBD -- create $dir"
+    upvar #0 localmoddir localmoddir
+    upvar #0 globalmoddir globalmoddir
+    upvar #0 globalmodssh globalmodssh
+    safesystem "git clone $globalmoddir $localmoddir"
+    safesystem "git -C $localmoddir remote set-url --push origin $globalmodssh"
 }
 
 
 # create directory if necessary
 if [ module-info mode load ] {
-    if { [ file exists $localmoddir ] } {
-        ensure-proper-localmoddir
-    } else {
+    if { ! [ file exists $localmoddir ] } {
         create-localmoddir
     }
+    ensure-proper-localmoddir
 }
 
 ## These two work for load, but not for unload (the $globalmoddir doesn't get put back in):
