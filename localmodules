@@ -5,6 +5,15 @@
 ##
 ## This is useful for editing and testing Modulefiles.
 ##
+## Tune to your system:
+## 1. $localmoddir and $globalmoddir
+## 2. ?
+
+eval set  [ array get env HOME ]
+set localmoddir   $HOME/modulefiles
+set globalmoddir /home/modules/modulefiles
+
+
 proc ModulesHelp { } {
     puts stderr "localmodules: switch to local Git repo for Modulefiles\n"
     puts stderr "\n"
@@ -12,10 +21,6 @@ proc ModulesHelp { } {
 }
 
 module-whatis   "switch MODULEPATH to local git repo"
-
-eval set  [ array get env HOME ]
-set localmoddir   $HOME/modulefiles
-set globalmoddir /home/modules/modulefiles
 
 # create directory if necessary
 if [ module-info mode load ] {
