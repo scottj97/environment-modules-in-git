@@ -16,8 +16,12 @@ set globalmoddir /home/modules/modulefiles
 
 proc ModulesHelp { } {
     puts stderr "localmodules: switch to local Git repo for Modulefiles\n"
-    puts stderr "\n"
-    puts stderr "This is useful for editing and testing Modulefiles.\n"
+    puts stderr "This is useful for editing and testing Modulefiles."
+    puts stderr "Usage:"
+    puts stderr "   $ module load localmodules"
+    puts stderr "Then edit and test modulefiles in ~/modulefiles"
+    puts stderr "When complete, git commit and push, then"
+    puts stderr "   $ module unload localmodules"
 }
 
 module-whatis   "switch MODULEPATH to local git repo"
@@ -44,4 +48,10 @@ if [ module-info mode unload ] {
     ## Ugly hack: this works, but assumes that $globalmoddir should be the only MODULEPATH
     unsetenv MODULEPATH $globalmoddir
     unsetenv MODULEPATH_modshare $globalmoddir:1
+}
+
+if [ module-info mode load ] {
+    puts stderr "Switched to local modulefiles in ~/modulefiles"
+    puts stderr "When editing and testing complete, git commit and push, then:"
+    puts stderr "   $ module unload localmodules"
 }
