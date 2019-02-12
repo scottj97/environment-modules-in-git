@@ -27,7 +27,7 @@ when not controlled using a SCM like Git.
 * You have Environment Modules installed on your system
 
 * You have a Unix user named `modules` that exists only for managing
-  the modulefiles, and controlling updates to them.
+  the Modulefiles, and controlling updates to them.
 
 * The path `/home/modules/modulefiles` is in your `modulesrc` file:
 
@@ -43,10 +43,10 @@ module use --append {/home/modules/modulefiles}
 
 ## Principles of Operation
 
-First we create a git repo for the modulefiles.
+First we create a git repo for the Modulefiles.
 
 Then we install a modulefile that, when loaded, switches MODULEPATH to
-a locally-created git clone of the modulefiles. When unloaded, it
+a locally-created git clone of the Modulefiles. When unloaded, it
 switches MODULEPATH back to the default.
 
 After this, any time a user wants to edit the Modulefiles, he works in
@@ -65,7 +65,7 @@ Set up the master repo at `/home/modules/modulefiles`, as user `modules`:
 cd /home/modules/modulefiles
 git init
 git add .
-git commit -m 'Initial checkin of existing modulefiles'
+git commit -m 'Initial checkin of existing Modulefiles'
 
 # Enable updates when receiving pushes:
 git config --local receive.denyCurrentBranch updateInstead
