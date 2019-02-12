@@ -18,6 +18,10 @@ when not controlled using a SCM like Git.
 * To be able to track changes to the system-wide Modulefiles using
   Git.
 
+* To enable testing of new tool versions (with their associated
+  Modulefiles) before making the new version generally available
+  (since the new Modulefile will not be public until pushed).
+
 ## Assumptions
 
 * You have Environment Modules installed on your system
