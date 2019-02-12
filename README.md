@@ -49,9 +49,10 @@ Then we install a modulefile that, when loaded, switches MODULEPATH to
 a locally-created git clone of the modulefiles. When unloaded, it
 switches MODULEPATH back to the default.
 
-After editing, testing, and commiting to the local git repo, `git
-push` updates the master repo, which (assuming the user knows the
-password for user `modules`) automatically updates
+After this, any time a user wants to edit the Modulefiles, he works in
+his local git repo. After editing, testing, and commiting to the local
+git repo, `git push` updates the master repo, which (assuming the user
+knows the password for user `modules`) automatically updates
 `/home/modules/modulefiles`.
 
 ## Execution
