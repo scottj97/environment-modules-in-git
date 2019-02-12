@@ -26,10 +26,26 @@ proc ModulesHelp { } {
 
 module-whatis   "switch MODULEPATH to local git repo"
 
+proc ensure-proper-localmoddir {} {
+    upvar #0 localmoddir dir
+    puts stderr "HACK check $dir -- implement me"
+    # Make sure it's a directory
+    # Make sure it has the expected .git remote setup
+
+}
+
+proc create-localmoddir {} {
+    upvar #0 localmoddir dir
+    error "TBD -- create $dir"
+}
+
+
 # create directory if necessary
 if [ module-info mode load ] {
-    if { ! [ file exists $localmoddir ] } {
-        error "TBD -- create $localmoddir"
+    if { [ file exists $localmoddir ] } {
+        ensure-proper-localmoddir
+    } else {
+        create-localmoddir
     }
 }
 
