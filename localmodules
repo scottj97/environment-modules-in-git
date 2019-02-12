@@ -6,15 +6,23 @@
 ## This is useful for editing and testing Modulefiles.
 ##
 ## Tune to your system:
-## 1. $localmoddir, $globalmoddir, $globalmodssh
-## 2. ?
+## $localmoddir, $globalmod_fetch, $globalmod_push
+##
+## github.com/scottj97/environment-modules-in-git
+
 
 eval set  [ array get env HOME ]
 
+# Where each user's local copy should go:
 set localmoddir   $HOME/modulefiles
-set globalmoddir /home/modules/modulefiles
-# Equivalent path via git-ssh:
-set globalmodssh ssh://modules@localhost/home/modules/modulefiles
+
+# Where `git fetch` can find the master repo:
+set globalmod_fetch /home/modules/modulefiles
+
+# Where `git push` should write to the master repo:
+set globalmod_push ssh://modules@localhost/home/modules/modulefiles
+
+
 
 proc ModulesHelp { } {
     upvar #0 localmoddir localmoddir
@@ -41,8 +49,8 @@ proc safesystem {cmd} {
 # if they happen to have something unexpected here
 proc ensure-proper-localmoddir {} {
     upvar #0 localmoddir dir
-    upvar #0 globalmoddir globalmoddir
-    upvar #0 globalmodssh globalmodssh
+    upvar #0 globalmod_fetch globalmod_fetch
+    upvar #0 globalmod_push globalmod_push
 
     # Make sure it's a directory
     if { ! [ file isdirectory $dir ] } {
@@ -53,8 +61,8 @@ proc ensure-proper-localmoddir {} {
     if { ! [ file isdirectory [ file join $dir ".git" ] ] } {
         error "expected git repo inside $dir, found none"
     }
-    safesystem "if \[ `git -C $dir remote get-url origin` != \"$globalmoddir\" ]; then exit 1; fi"
-    safesystem "if \[ `git -C $dir remote get-url --push origin` != \"$globalmodssh\" ]; then exit 1; fi"
+    safesystem "if \[ `git -C $dir remote get-url origin` != \"$globalmod_fetch\" ]; then exit 1; fi"
+    safesystem "if \[ `git -C $dir remote get-url --push origin` != \"$globalmod_push\" ]; then exit 1; fi"
 
     # Make sure it's up to date (`git pull --ff-only`)
     system "git -C $dir pull --ff-only"
@@ -63,11 +71,11 @@ proc ensure-proper-localmoddir {} {
 # No $localmoddir exists, so run `git clone` to create
 proc create-localmoddir {} {
     upvar #0 localmoddir localmoddir
-    upvar #0 globalmoddir globalmoddir
-    upvar #0 globalmodssh globalmodssh
+    upvar #0 globalmod_fetch globalmod_fetch
+    upvar #0 globalmod_push globalmod_push
 
-    safesystem "git clone $globalmoddir $localmoddir"
-    safesystem "git -C $localmoddir remote set-url --push origin $globalmodssh"
+    safesystem "git clone $globalmod_fetch $localmoddir"
+    safesystem "git -C $localmoddir remote set-url --push origin $globalmod_push"
 }
 
 
@@ -79,21 +87,21 @@ if [ module-info mode load ] {
     ensure-proper-localmoddir
 }
 
-## These two work for load, but not for unload (the $globalmoddir doesn't get put back in):
-##   remove-path MODULEPATH $globalmoddir
+## These two work for load, but not for unload (the $globalmod_fetch doesn't get put back in):
+##   remove-path MODULEPATH $globalmod_fetch
 ##   append-path MODULEPATH $localmoddir
 
-## These two work for load, but not for unload (the $globalmoddir doesn't get put back in):
-module unuse $globalmoddir
+## These two work for load, but not for unload (the $globalmod_fetch doesn't get put back in):
+module unuse $globalmod_fetch
 module use --append $localmoddir
 
 if [ module-info mode unload ] {
     ## The `module unuse` does not get automatically undone during `unload`.
     ## So we have to manually reverse it.
 
-    ## Ugly hack: this works, but assumes that $globalmoddir should be the only MODULEPATH
-    unsetenv MODULEPATH $globalmoddir
-    unsetenv MODULEPATH_modshare $globalmoddir:1
+    ## Ugly hack: this works, but assumes that $globalmod_fetch should be the only MODULEPATH
+    unsetenv MODULEPATH $globalmod_fetch
+    unsetenv MODULEPATH_modshare $globalmod_fetch:1
 }
 
 if [ module-info mode load ] {
