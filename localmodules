@@ -63,9 +63,6 @@ proc ensure-proper-localmoddir {} {
     }
     safesystem "if \[ `git -C $dir remote get-url origin` != \"$globalmod_fetch\" ]; then exit 1; fi"
     safesystem "if \[ `git -C $dir remote get-url --push origin` != \"$globalmod_push\" ]; then exit 1; fi"
-
-    # Make sure it's up to date (`git pull --ff-only`)
-    system "git -C $dir pull --ff-only"
 }
 
 # No $localmoddir exists, so run `git clone` to create
@@ -76,6 +73,12 @@ proc create-localmoddir {} {
 
     safesystem "git clone $globalmod_fetch $localmoddir"
     safesystem "git -C $localmoddir remote set-url --push origin $globalmod_push"
+}
+
+proc check-repo-status {} {
+    upvar #0 localmoddir localmoddir
+    safesystem "git -C $localmoddir remote update"
+    safesystem "git -C $localmoddir status"
 }
 
 
@@ -105,7 +108,8 @@ if [ module-info mode unload ] {
 }
 
 if [ module-info mode load ] {
-    puts stderr "Switched to local modulefiles in $localmoddir"
+    puts stderr "\nSwitched to local modulefiles in $localmoddir"
     puts stderr "When editing and testing complete, git commit and push, then:"
-    puts stderr "   $ module unload localmodules"
+    puts stderr "   $ module unload localmodules\n"
+    check-repo-status
 }
