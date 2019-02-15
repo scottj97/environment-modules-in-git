@@ -6,15 +6,18 @@
 ## This is useful for editing and testing Modulefiles.
 ##
 ## Tune to your system:
-## $localmoddir, $globalmod_fetch, $globalmod_push
+## $specialuser, $localmoddir, $globalmod_fetch, $globalmod_push
 ##
 ## github.com/scottj97/environment-modules-in-git
 
 
 eval set  [ array get env HOME ]
 
+# Special Unix username that own the master Modulefiles repo
+set specialuser modules
+
 # Where each user's local copy should go:
-set localmoddir   $HOME/modulefiles
+set localmoddir $HOME/modulefiles
 
 # Where `git fetch` can find the master repo:
 set globalmod_fetch /home/modules/modulefiles
@@ -81,6 +84,14 @@ proc check-repo-status {} {
     safesystem "git -C $localmoddir status"
 }
 
+
+# Special modules user not allowed to load or unload this.
+# Why? Because it would defeat the purpose of tracking changes, if the
+# changes were committed by this anonymous special user.
+eval set  [ array get env USER ]
+if { $USER == $specialuser } {
+    error "special user $specialuser should not load this module"
+}
 
 # create directory if necessary
 if [ module-info mode load ] {
