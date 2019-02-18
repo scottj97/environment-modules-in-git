@@ -1,4 +1,4 @@
-#%Module1.0######################################################################
+#%Module4.0
 ##
 ## When loaded, use a local git repo for our Modulefiles,
 ## instead of the system-wide location that is typically used.
