@@ -35,9 +35,6 @@ when not controlled using a SCM like Git.
 module use --append {/home/modules/modulefiles}
 ```
 
-* There are no other MODULEPATH directories in use. (This is a
-  limitation of my `localmodules` unload process.)
-
 * Other Unix users (not named `modules`) use the modules from
   `/home/modules/modulefiles`.
 
