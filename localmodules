@@ -51,21 +51,21 @@ proc safesystem {cmd} {
 # Make sure $localmoddir is what we expect, so we don't clobber anybody's work
 # if they happen to have something unexpected here
 proc ensure-proper-localmoddir {} {
-    upvar #0 localmoddir dir
+    upvar #0 localmoddir localmoddir
     upvar #0 globalmod_fetch globalmod_fetch
     upvar #0 globalmod_push globalmod_push
 
     # Make sure it's a directory
-    if { ! [ file isdirectory $dir ] } {
-        error "a file named $dir already exists, and I don't want to clobber it"
+    if { ! [ file isdirectory $localmoddir ] } {
+        error "a file named $localmoddir already exists, and I don't want to clobber it"
     }
 
     # Make sure it has the expected .git remote setup
-    if { ! [ file isdirectory [ file join $dir ".git" ] ] } {
-        error "expected git repo inside $dir, found none"
+    if { ! [ file isdirectory [ file join $localmoddir ".git" ] ] } {
+        error "expected git repo inside $localmoddir, found none"
     }
-    safesystem "if \[ `git -C $dir remote get-url origin` != \"$globalmod_fetch\" ]; then exit 1; fi"
-    safesystem "if \[ `git -C $dir remote get-url --push origin` != \"$globalmod_push\" ]; then exit 1; fi"
+    safesystem "if \[ `git -C $localmoddir remote get-url origin` != \"$globalmod_fetch\" ]; then exit 1; fi"
+    safesystem "if \[ `git -C $localmoddir remote get-url --push origin` != \"$globalmod_push\" ]; then exit 1; fi"
 }
 
 # No $localmoddir exists, so run `git clone` to create
