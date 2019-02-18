@@ -28,7 +28,7 @@ set globalmod_push ssh://modules@localhost/home/modules/modulefiles
 
 
 proc ModulesHelp { } {
-    upvar #0 localmoddir localmoddir
+    global localmoddir
     puts stderr "localmodules: switch to local Git repo for Modulefiles\n"
     puts stderr "This is useful for editing and testing Modulefiles."
     puts stderr "Usage:"
@@ -51,9 +51,9 @@ proc safesystem {cmd} {
 # Make sure $localmoddir is what we expect, so we don't clobber anybody's work
 # if they happen to have something unexpected here
 proc ensure-proper-localmoddir {} {
-    upvar #0 localmoddir localmoddir
-    upvar #0 globalmod_fetch globalmod_fetch
-    upvar #0 globalmod_push globalmod_push
+    global localmoddir
+    global globalmod_fetch
+    global globalmod_push
 
     # Make sure it's a directory
     if { ! [ file isdirectory $localmoddir ] } {
@@ -70,16 +70,16 @@ proc ensure-proper-localmoddir {} {
 
 # No $localmoddir exists, so run `git clone` to create
 proc create-localmoddir {} {
-    upvar #0 localmoddir localmoddir
-    upvar #0 globalmod_fetch globalmod_fetch
-    upvar #0 globalmod_push globalmod_push
+    global localmoddir
+    global globalmod_fetch
+    global globalmod_push
 
     safesystem "git clone $globalmod_fetch $localmoddir"
     safesystem "git -C $localmoddir remote set-url --push origin $globalmod_push"
 }
 
 proc check-repo-status {} {
-    upvar #0 localmoddir localmoddir
+    global localmoddir
     safesystem "git -C $localmoddir remote update"
     safesystem "git -C $localmoddir status"
 }
