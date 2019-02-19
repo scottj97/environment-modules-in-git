@@ -1,4 +1,4 @@
-#%Module4.0
+#%Module4.1
 ##
 ## When loaded, use a local git repo for our Modulefiles,
 ## instead of the system-wide location that is typically used.
@@ -84,18 +84,6 @@ proc check-repo-status {} {
     safesystem "git -C $localmoddir status"
 }
 
-# Return $str with $old substituted with $new
-proc string-subst {str old new} {
-    # [ string map ... ] doesn't work if the paths have any spaces in them
-    set startIdx [ string first $old $str ]
-    set endIdx [ expr [ string length $old ] + $startIdx - 1 ]
-    if { $startIdx == -1 } {
-        # This can happen if *_modshare is not properly maintained
-        return $str
-    }
-    return [ string replace $str $startIdx $endIdx $new ]
-}
-
 # Special modules user not allowed to load or unload this.
 # Why? Because it would defeat the purpose of tracking changes, if the
 # changes were committed by this anonymous special user.
@@ -120,14 +108,17 @@ if [ module-info mode load ] {
 ##   module unuse $globalmod_fetch
 ##   module use --append $localmoddir
 
+## This method assumes that $MODULES_REPO is part of MODULEPATH, e.g. in your modulerc:
+##   setenv MODULES_REPO /home/modules/modulefiles
+##   module use /\$MODULES_REPO
+
+
 if [ module-info mode load ] {
-    setenv MODULEPATH          [ string-subst [ getenv MODULEPATH          ] $globalmod_fetch $localmoddir ]
-    setenv MODULEPATH_modshare [ string-subst [ getenv MODULEPATH_modshare ] $globalmod_fetch $localmoddir ]
+    setenv MODULES_REPO $localmoddir
 }
 if [ module-info mode unload ] {
     # unsetenv gets converted to setenv since we're unloading
-    unsetenv MODULEPATH          [ string-subst [ getenv MODULEPATH          ] $localmoddir $globalmod_fetch ]
-    unsetenv MODULEPATH_modshare [ string-subst [ getenv MODULEPATH_modshare ] $localmoddir $globalmod_fetch ]
+    unsetenv MODULES_REPO $globalmod_fetch
 }
 
 if [ module-info mode load ] {

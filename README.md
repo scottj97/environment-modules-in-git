@@ -30,7 +30,7 @@ when not controlled using a SCM like Git.
 * You have a Unix user named `modules` that exists only for managing
   the Modulefiles, and controlling updates to them.
 
-* The path `/home/modules/modulefiles` is in your `modulesrc` file:
+* The path `/home/modules/modulefiles` is in your `modulerc` file:
 
 ```
 module use --append {/home/modules/modulefiles}
@@ -67,6 +67,12 @@ git commit -m 'Initial checkin of existing Modulefiles'
 
 # Enable updates when receiving pushes:
 git config --local receive.denyCurrentBranch updateInstead
+
+# Edit your global $MODULESHOME/init/modulerc file to use the new env
+# var MODULES_REPO instead of hard-coding the path (requires Modules
+# 4.1). Your modulerc should have:
+##   setenv MODULES_REPO /home/modules/modulefiles
+##   module use /\$MODULES_REPO
 
 # Get localmodules file from GitHub
 curl --output localmodules https://raw.githubusercontent.com/scottj97/environment-modules-in-git/master/localmodules
