@@ -71,7 +71,8 @@ git config --local receive.denyCurrentBranch updateInstead
 curl --output localmodules https://raw.githubusercontent.com/scottj97/environment-modules-in-git/master/localmodules
 
 # Edit paths in the top of localmodules, if your installation differs from the assumptions, then:
-git commit -am 'Add localmodules from github.com/scottj97/environment-modules-in-git'
+git add localmodules
+git commit -m 'Add localmodules from github.com/scottj97/environment-modules-in-git'
 
 ```
 
