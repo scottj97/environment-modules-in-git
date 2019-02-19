@@ -19,7 +19,8 @@ set specialuser modules
 # Where each user's local copy should go:
 set localmoddir $HOME/modulefiles
 
-# Where `git fetch` can find the master repo:
+# Where `git fetch` can find the master repo.
+# This must be a filesystem path, since it will also be used by Modules:
 set globalmod_fetch /home/modules/modulefiles
 
 # Where `git push` should write to the master repo:
