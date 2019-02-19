@@ -24,7 +24,8 @@ when not controlled using a SCM like Git.
 
 ## Assumptions
 
-* You have Environment Modules version 4.2.1 installed on your system
+* You have Environment Modules version 4.2.1 installed on your system,
+  and Git version 2.4 or later.
 
 * You have a Unix user named `modules` that exists only for managing
   the Modulefiles, and controlling updates to them.
