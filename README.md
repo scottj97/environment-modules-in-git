@@ -73,6 +73,7 @@ git config --local receive.denyCurrentBranch updateInstead
 # 4.1). Your modulerc should have:
 ##   setenv MODULES_REPO /home/modules/modulefiles
 ##   module use /\$MODULES_REPO
+# The extra slash required before \$MODULES_REPO is a bug: https://github.com/cea-hpc/modules/issues/223
 
 # Get localmodules file from GitHub
 curl --output localmodules https://raw.githubusercontent.com/scottj97/environment-modules-in-git/master/localmodules
