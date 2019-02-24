@@ -51,7 +51,7 @@ proc safeSystem {cmd} {
 
 # Make sure $localmoddir is what we expect, so we don't clobber anybody's work
 # if they happen to have something unexpected here
-proc ensure-proper-localmoddir {} {
+proc ensureProperLocalmoddir {} {
    global localmoddir
    global globalmodfetch
    global globalmodpush
@@ -98,7 +98,7 @@ if [ module-info mode load ] {
    if { ! [ file exists $localmoddir ] } {
       create-localmoddir
    }
-   ensure-proper-localmoddir
+   ensureProperLocalmoddir
 }
 
 ## These two work for load, but not for unload (the $globalmodfetch doesn't get put back in):
