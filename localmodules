@@ -42,7 +42,7 @@ proc ModulesHelp {} {
 module-whatis   {switch MODULEPATH to local git repo}
 
 # Runs `system` and dies if error code is nonzero
-proc safeSystem {cmd} {
+proc safeSystem cmd {
    set retcode [system $cmd]
    if {[expr {$retcode != 0}]} {
       error "`$cmd` returned non-zero exit code: $retcode"
@@ -63,7 +63,7 @@ proc ensureProperLocalmoddir {} {
    }
 
    # Make sure it has the expected .git remote setup
-   if {![file isdirectory [file join $localmoddir ".git"]]} {
+   if {![file isdirectory [file join $localmoddir .git]]} {
       error "expected git repo inside $localmoddir, found none"
    }
    safeSystem "if \[ `git -C $localmoddir remote get-url origin` !=\
@@ -130,7 +130,7 @@ if [module-info mode unload] {
 
 if [module-info mode load] {
    puts stderr "\nSwitched to local modulefiles in $localmoddir"
-   puts stderr "When editing and testing complete, git commit and push, then:"
+   puts stderr {When editing and testing complete, git commit and push, then:}
    puts stderr "   $ module unload localmodules\n"
    checkRepoStatus
 }
