@@ -42,7 +42,7 @@ proc ModulesHelp { } {
 module-whatis   "switch MODULEPATH to local git repo"
 
 # Runs `system` and dies if error code is nonzero
-proc safesystem {cmd} {
+proc safeSystem {cmd} {
    set retcode [ system $cmd ]
    if { [ expr { $retcode != 0 } ] } {
       error "`$cmd` returned non-zero exit code: $retcode"
@@ -65,8 +65,8 @@ proc ensure-proper-localmoddir {} {
    if { ! [ file isdirectory [ file join $localmoddir ".git" ] ] } {
       error "expected git repo inside $localmoddir, found none"
    }
-   safesystem "if \[ `git -C $localmoddir remote get-url origin` != \"$globalmodfetch\" ]; then exit 1; fi"
-   safesystem "if \[ `git -C $localmoddir remote get-url --push origin` != \"$globalmodpush\" ]; then exit 1; fi"
+   safeSystem "if \[ `git -C $localmoddir remote get-url origin` != \"$globalmodfetch\" ]; then exit 1; fi"
+   safeSystem "if \[ `git -C $localmoddir remote get-url --push origin` != \"$globalmodpush\" ]; then exit 1; fi"
 }
 
 # No $localmoddir exists, so run `git clone` to create
@@ -75,14 +75,14 @@ proc create-localmoddir {} {
    global globalmodfetch
    global globalmodpush
 
-   safesystem "git clone $globalmodfetch $localmoddir"
-   safesystem "git -C $localmoddir remote set-url --push origin $globalmodpush"
+   safeSystem "git clone $globalmodfetch $localmoddir"
+   safeSystem "git -C $localmoddir remote set-url --push origin $globalmodpush"
 }
 
 proc check-repo-status {} {
    global localmoddir
-   safesystem "git -C $localmoddir remote update"
-   safesystem "git -C $localmoddir status"
+   safeSystem "git -C $localmoddir remote update"
+   safeSystem "git -C $localmoddir status"
 }
 
 # Special modules user not allowed to load or unload this.
