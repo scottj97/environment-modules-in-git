@@ -79,7 +79,7 @@ proc createLocalmoddir {} {
    safeSystem "git -C $localmoddir remote set-url --push origin $globalmodpush"
 }
 
-proc check-repo-status {} {
+proc checkRepoStatus {} {
    global localmoddir
    safeSystem "git -C $localmoddir remote update"
    safeSystem "git -C $localmoddir status"
@@ -126,5 +126,5 @@ if [ module-info mode load ] {
    puts stderr "\nSwitched to local modulefiles in $localmoddir"
    puts stderr "When editing and testing complete, git commit and push, then:"
    puts stderr "   $ module unload localmodules\n"
-   check-repo-status
+   checkRepoStatus
 }
