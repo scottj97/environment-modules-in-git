@@ -6,7 +6,7 @@
 ## This is useful for editing and testing Modulefiles.
 ##
 ## Tune to your system:
-## $specialuser, $localmoddir, $globalmod_fetch, $globalmod_push
+## $specialuser, $localmoddir, $globalmodfetch, $globalmod_push
 ##
 ## github.com/scottj97/environment-modules-in-git
 
@@ -21,7 +21,7 @@ set localmoddir $HOME/modulefiles
 
 # Where `git fetch` can find the master repo.
 # This must be a filesystem path, since it will also be used by Modules:
-set globalmod_fetch /home/modules/modulefiles
+set globalmodfetch /home/modules/modulefiles
 
 # Where `git push` should write to the master repo:
 set globalmod_push ssh://modules@localhost/home/modules/modulefiles
@@ -53,7 +53,7 @@ proc safesystem {cmd} {
 # if they happen to have something unexpected here
 proc ensure-proper-localmoddir {} {
     global localmoddir
-    global globalmod_fetch
+    global globalmodfetch
     global globalmod_push
 
     # Make sure it's a directory
@@ -65,17 +65,17 @@ proc ensure-proper-localmoddir {} {
     if { ! [ file isdirectory [ file join $localmoddir ".git" ] ] } {
         error "expected git repo inside $localmoddir, found none"
     }
-    safesystem "if \[ `git -C $localmoddir remote get-url origin` != \"$globalmod_fetch\" ]; then exit 1; fi"
+    safesystem "if \[ `git -C $localmoddir remote get-url origin` != \"$globalmodfetch\" ]; then exit 1; fi"
     safesystem "if \[ `git -C $localmoddir remote get-url --push origin` != \"$globalmod_push\" ]; then exit 1; fi"
 }
 
 # No $localmoddir exists, so run `git clone` to create
 proc create-localmoddir {} {
     global localmoddir
-    global globalmod_fetch
+    global globalmodfetch
     global globalmod_push
 
-    safesystem "git clone $globalmod_fetch $localmoddir"
+    safesystem "git clone $globalmodfetch $localmoddir"
     safesystem "git -C $localmoddir remote set-url --push origin $globalmod_push"
 }
 
@@ -101,12 +101,12 @@ if [ module-info mode load ] {
     ensure-proper-localmoddir
 }
 
-## These two work for load, but not for unload (the $globalmod_fetch doesn't get put back in):
-##   remove-path MODULEPATH $globalmod_fetch
+## These two work for load, but not for unload (the $globalmodfetch doesn't get put back in):
+##   remove-path MODULEPATH $globalmodfetch
 ##   append-path MODULEPATH $localmoddir
 
-## These two work for load, but not for unload (the $globalmod_fetch doesn't get put back in):
-##   module unuse $globalmod_fetch
+## These two work for load, but not for unload (the $globalmodfetch doesn't get put back in):
+##   module unuse $globalmodfetch
 ##   module use --append $localmoddir
 
 ## This method assumes that $MODULES_REPO is part of MODULEPATH, e.g. in your modulerc:
@@ -119,7 +119,7 @@ if [ module-info mode load ] {
 }
 if [ module-info mode unload ] {
     # unsetenv gets converted to setenv since we're unloading
-    unsetenv MODULES_REPO $globalmod_fetch
+    unsetenv MODULES_REPO $globalmodfetch
 }
 
 if [ module-info mode load ] {
