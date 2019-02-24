@@ -70,7 +70,7 @@ proc ensureProperLocalmoddir {} {
 }
 
 # No $localmoddir exists, so run `git clone` to create
-proc create-localmoddir {} {
+proc createLocalmoddir {} {
    global localmoddir
    global globalmodfetch
    global globalmodpush
@@ -96,7 +96,7 @@ if { $USER == $specialuser } {
 # create directory if necessary
 if [ module-info mode load ] {
    if { ! [ file exists $localmoddir ] } {
-      create-localmoddir
+      createLocalmoddir
    }
    ensureProperLocalmoddir
 }
