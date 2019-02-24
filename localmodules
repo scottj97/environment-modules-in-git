@@ -49,8 +49,8 @@ proc safeSystem {cmd} {
    }
 }
 
-# Make sure $localmoddir is what we expect, so we don't clobber anybody's work
-# if they happen to have something unexpected here
+# Make sure $localmoddir is what we expect, so we don't clobber
+# anybody's work if they happen to have something unexpected here
 proc ensureProperLocalmoddir {} {
    global localmoddir
    global globalmodfetch
@@ -58,15 +58,18 @@ proc ensureProperLocalmoddir {} {
 
    # Make sure it's a directory
    if { ! [ file isdirectory $localmoddir ] } {
-      error "a file named $localmoddir already exists, and I don't want to clobber it"
+      error "a file named $localmoddir already exists, and\
+         I don't want to clobber it"
    }
 
    # Make sure it has the expected .git remote setup
    if { ! [ file isdirectory [ file join $localmoddir ".git" ] ] } {
       error "expected git repo inside $localmoddir, found none"
    }
-   safeSystem "if \[ `git -C $localmoddir remote get-url origin` != \"$globalmodfetch\" ]; then exit 1; fi"
-   safeSystem "if \[ `git -C $localmoddir remote get-url --push origin` != \"$globalmodpush\" ]; then exit 1; fi"
+   safeSystem "if \[ `git -C $localmoddir remote get-url origin` !=\
+      \"$globalmodfetch\" ]; then exit 1; fi"
+   safeSystem "if \[ `git -C $localmoddir remote get-url --push origin` !=\
+      \"$globalmodpush\" ]; then exit 1; fi"
 }
 
 # No $localmoddir exists, so run `git clone` to create
@@ -101,15 +104,18 @@ if [ module-info mode load ] {
    ensureProperLocalmoddir
 }
 
-## These two work for load, but not for unload (the $globalmodfetch doesn't get put back in):
+## These two work for load, but not for unload
+## (the $globalmodfetch doesn't get put back in):
 ##   remove-path MODULEPATH $globalmodfetch
 ##   append-path MODULEPATH $localmoddir
 
-## These two work for load, but not for unload (the $globalmodfetch doesn't get put back in):
+## These two work for load, but not for unload
+## (the $globalmodfetch doesn't get put back in):
 ##   module unuse $globalmodfetch
 ##   module use --append $localmoddir
 
-## This method assumes that $MODULES_REPO is part of MODULEPATH, e.g. in your modulerc:
+## This method assumes that $MODULES_REPO is part
+## of MODULEPATH, e.g. in your modulerc:
 ##   setenv MODULES_REPO /home/modules/modulefiles
 ##   module use /\$MODULES_REPO
 
