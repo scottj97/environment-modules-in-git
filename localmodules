@@ -31,15 +31,15 @@ set globalmodpush ssh://modules@localhost/home/modules/modulefiles
 proc ModulesHelp {} {
    global localmoddir
    puts stderr "localmodules: switch to local Git repo for Modulefiles\n"
-   puts stderr "This is useful for editing and testing Modulefiles."
-   puts stderr "Usage:"
-   puts stderr "   $ module load localmodules"
+   puts stderr {This is useful for editing and testing Modulefiles.}
+   puts stderr {Usage:}
+   puts stderr {   $ module load localmodules}
    puts stderr "Then edit and test modulefiles in $localmoddir"
-   puts stderr "When complete, git commit and push, then"
-   puts stderr "   $ module unload localmodules"
+   puts stderr {When complete, git commit and push, then}
+   puts stderr {   $ module unload localmodules}
 }
 
-module-whatis   "switch MODULEPATH to local git repo"
+module-whatis   {switch MODULEPATH to local git repo}
 
 # Runs `system` and dies if error code is nonzero
 proc safeSystem {cmd} {
