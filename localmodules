@@ -6,7 +6,7 @@
 ## This is useful for editing and testing Modulefiles.
 ##
 ## Tune to your system:
-## $specialuser, $localmoddir, $globalmodfetch, $globalmod_push
+## $specialuser, $localmoddir, $globalmodfetch, $globalmodpush
 ##
 ## github.com/scottj97/environment-modules-in-git
 
@@ -24,7 +24,7 @@ set localmoddir $HOME/modulefiles
 set globalmodfetch /home/modules/modulefiles
 
 # Where `git push` should write to the master repo:
-set globalmod_push ssh://modules@localhost/home/modules/modulefiles
+set globalmodpush ssh://modules@localhost/home/modules/modulefiles
 
 
 
@@ -54,7 +54,7 @@ proc safesystem {cmd} {
 proc ensure-proper-localmoddir {} {
     global localmoddir
     global globalmodfetch
-    global globalmod_push
+    global globalmodpush
 
     # Make sure it's a directory
     if { ! [ file isdirectory $localmoddir ] } {
@@ -66,17 +66,17 @@ proc ensure-proper-localmoddir {} {
         error "expected git repo inside $localmoddir, found none"
     }
     safesystem "if \[ `git -C $localmoddir remote get-url origin` != \"$globalmodfetch\" ]; then exit 1; fi"
-    safesystem "if \[ `git -C $localmoddir remote get-url --push origin` != \"$globalmod_push\" ]; then exit 1; fi"
+    safesystem "if \[ `git -C $localmoddir remote get-url --push origin` != \"$globalmodpush\" ]; then exit 1; fi"
 }
 
 # No $localmoddir exists, so run `git clone` to create
 proc create-localmoddir {} {
     global localmoddir
     global globalmodfetch
-    global globalmod_push
+    global globalmodpush
 
     safesystem "git clone $globalmodfetch $localmoddir"
-    safesystem "git -C $localmoddir remote set-url --push origin $globalmod_push"
+    safesystem "git -C $localmoddir remote set-url --push origin $globalmodpush"
 }
 
 proc check-repo-status {} {
