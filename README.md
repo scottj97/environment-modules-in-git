@@ -1,5 +1,11 @@
 # Environment Modules in Git
 
+## Obsolete
+
+This project has been moved to the
+[Cookbook](https://modules.readthedocs.io/en/stable/cookbook/modulefiles-in-git.html)
+in the official project.
+
 ## What?
 
 This is a demonstration of how to version control the Modulefiles
